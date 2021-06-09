@@ -77,9 +77,10 @@ const getLastElement = (htmlElements) => {
 
 const renderProfile = () => {
     const promises = Array.from(document.getElementsByClassName("Unwatched-showTitle"), item => {
+        const elements = item.closest("div.Row-container").getElementsByClassName("Unwatched-remain")
         return fetchQuery(matchShowId(item.href)).then(id => ({
             id: id,
-            element: getLastElement(item.closest("div.Row-container").getElementsByClassName("Unwatched-remain")),
+            element: getLastElement(elements),
         }))
     })
     return Promise.all(promises).then(result => result.map(createYoNode))
@@ -87,20 +88,20 @@ const renderProfile = () => {
 
 const renderSearch = () => {
     const promises = Array.from(document.getElementsByClassName("ShowCol-title"), item => {
+        const elements = item.parentElement.getElementsByClassName("ShowCol-titleOriginal")
         return fetchQuery(matchShowId(item.firstElementChild.href)).then(id => ({
             id: id,
-            element: getLastElement(item.parentElement.getElementsByClassName("ShowCol-titleOriginal")),
+            element: getLastElement(elements),
         }))
     })
     return Promise.all(promises).then(result => result.map(createYoNode))
 }
 
-const renderView = (showId) => {
-    return fetchQuery(showId).then(id => ({
-        id: id,
-        element: getLastElement(document.getElementsByClassName("ShowStatusBar-option"))
-    })).then(createYoNode)
-}
+const renderView = (showId) => fetchQuery(showId).then(id => ({
+    id: id,
+    element: getLastElement(document.getElementsByClassName("ShowStatusBar-option"))
+})).then(createYoNode)
+
 
 const createYoNode = (data) => {
     if (data.element.dataset.id === data.id.toString()) {
