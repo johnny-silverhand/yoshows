@@ -7,6 +7,8 @@ const observerConfig = {
     childList: true
 }
 
+const numbersPattern = /\d+/g
+
 const fetchOptions = (showId) => {
     return {
         method: "POST",
@@ -30,14 +32,18 @@ const fetchOptions = (showId) => {
     }
 }
 
+const log = (error) => {
+    return console.log(error.message)
+}
+
 const render = () => {
     const path = window.location.pathname
     if (path === "/profile/") {
-        renderProfile().catch(error => console.log(error.message))
+        renderProfile().catch(error => log(error))
     } else if (path === "/search/all/") {
-        renderSearch().catch(error => console.log(error.message))
+        renderSearch().catch(error => log(error))
     } else if (/view\/\d+\/+$/ig.exec(path)) {
-        renderView(path.match(/\d+/g).shift()).catch(error => console.log(error.message))
+        renderView(matchShowId(path)).catch(error => log(error))
     }
 }
 
@@ -61,14 +67,22 @@ const fetchQuery = (showId) => {
         .then(data => data.result.kinopoiskId)
 }
 
+const matchShowId = (href) => {
+    const [showId, ...trash] = href.match(numbersPattern)
+    return showId
+}
+
+const getLastElement = (htmlElements) => {
+    const elements = Array.from(htmlElements)
+    return elements[elements.length - 1]
+}
+
 const renderProfile = () => {
     return Promise.all(Array.from(document.getElementsByClassName("Unwatched-showTitle"), item => {
-        const showId = item.href.match(/\d+/g).shift()
-        const element = Array.from(item.closest("div.Row-container").getElementsByClassName("Unwatched-remain")).pop()
-        return fetchQuery(showId).then(result => {
+        return fetchQuery(matchShowId(item.href)).then(result => {
             return {
                 id: result,
-                element: element,
+                element: getLastElement(item.closest("div.Row-container").getElementsByClassName("Unwatched-remain")),
             }
         })
     })).then(result => result.map(value => createYoNode(value)))
@@ -76,12 +90,10 @@ const renderProfile = () => {
 
 const renderSearch = () => {
     return Promise.all(Array.from(document.getElementsByClassName("ShowCol-title"), item => {
-        const showId = item.firstElementChild.href.match(/\d+/g).shift()
-        const element = Array.from(item.parentElement.getElementsByClassName("ShowCol-titleOriginal")).pop()
-        return fetchQuery(showId).then(result => {
+        return fetchQuery(matchShowId(item.firstElementChild.href)).then(result => {
             return {
                 id: result,
-                element: element,
+                element: getLastElement(item.parentElement.getElementsByClassName("ShowCol-titleOriginal")),
             }
         })
     })).then(result => result.map(value => createYoNode(value)))
@@ -89,10 +101,9 @@ const renderSearch = () => {
 
 const renderView = (showId) => {
     return fetchQuery(showId).then(result => {
-        const element = Array.from(document.getElementsByClassName("ShowStatusBar-option")).pop()
         return {
             id: result,
-            element: element
+            element: getLastElement(document.getElementsByClassName("ShowStatusBar-option"))
         }
     }).then(r => createYoNode(r))
 }
