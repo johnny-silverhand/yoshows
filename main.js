@@ -36,7 +36,9 @@ const log = (error) => console.log(error.message)
 
 const render = () => {
     const path = window.location.pathname
-    if (path === "/profile/") {
+    if (path === "/my/") {
+        renderMy().catch(log)
+    } else if (path === "/profile/") {
         renderProfile().catch(log)
     } else if (path === "/search/all/") {
         renderSearch().catch(log)
@@ -73,6 +75,21 @@ const matchShowId = (href) => {
 const getLastElement = (htmlElements) => {
     const elements = Array.from(htmlElements)
     return elements[elements.length - 1]
+}
+
+const renderMy = () => {
+    const promises = Array.from(document.getElementsByClassName("Row Unwatched-show clean"), item => {
+        const a = item.getElementsByClassName("Unwatched-showTitle").item(0)
+        const container = item.getElementsByClassName("Row-container").item(0)
+        const element = document.createElement("div")
+        element.classList.add("Unwatched-remain")
+        container.lastElementChild.append(element)
+        return fetchQuery(matchShowId(a.href)).then(id => ({
+            id: id,
+            element: element,
+        }))
+    })
+    return Promise.all(promises).then(result => result.map(createYoNode))
 }
 
 const renderProfile = () => {
