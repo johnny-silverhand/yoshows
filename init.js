@@ -157,7 +157,7 @@ const init = async () => {
     });
 
     if (playerURL === undefined) {
-        throw new Error(`⚠ playerURL not found.`);
+        throw new Error(`⚠️ playerURL not found.`);
     }
     log(`✅ playerURL found.`, `info`);
 
