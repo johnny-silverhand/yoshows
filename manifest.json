@@ -1,16 +1,21 @@
 {
   "manifest_version": 2,
   "name": "YoShows",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "",
   "content_scripts": [
     {
-      "matches": ["*://*.myshows.me/*"],
-      "js": ["main.js"]
+      "matches": [
+        "*://*.myshows.me/view/*"
+      ],
+      "js": [
+        "init.js"
+      ]
     }
   ],
   "permissions": [
     "*://*.myshows.me/*",
+    "*://*.bhcesh.me/*",
     "webRequest"
   ]
 }
