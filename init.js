@@ -164,9 +164,9 @@ const init = async () => {
     let picture = document.querySelector(`.PicturePoster-picture`);
     let placeholder = document.querySelector(`.PicturePoster-placeholder`);
     if (picture) {
-        picture.innerHTML = `<iframe src=${playerURL}></iframe>`
+        picture.innerHTML = `<iframe src=${playerURL} allowfullscreen></iframe>`
     } else if (placeholder) {
-        placeholder.innerHTML = `<iframe src=${playerURL}></iframe>`
+        placeholder.innerHTML = `<iframe src=${playerURL} allowfullscreen></iframe>`
         log(`⚠️ .PicturePoster-picture not found.`, `warning`);
     } else {
         log(`⚠️ .PicturePoster-placeholder not found.`, `warning`);
